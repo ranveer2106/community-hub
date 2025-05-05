@@ -1,77 +1,82 @@
-// const axios = require('axios');
-// const qs = require('qs');
-
 import axios from 'axios';
 import qs from 'qs';
+import dotenv from 'dotenv';
 
-// Replace with your actual keys
-const clientId = 'VRRQtlS_JChPkxQyDP1CGQ';
-const clientSecret = 'fwL0r61OK08i9djWUdLV_3q0iJpRzw';
-const subreddit = 'blursedimages'; // Change this to any subreddit
+dotenv.config();
 
-// Step 1: Get access token
+const clientId = process.env.REDDIT_CLIENT_ID;
+const clientSecret = process.env.REDDIT_CLIENT_SECRET;
+const subreddit = 'PokemonScarletViolet'; // Change this to your desired subreddit
+
 async function getAccessToken() {
-  const tokenResponse = await axios.post(
-    'https://www.reddit.com/api/v1/access_token',
-    qs.stringify({ grant_type: 'client_credentials' }),
-    {
-      headers: {
-        Authorization: `Basic ${Buffer.from(`${clientId}:${clientSecret}`).toString('base64')}`,
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
+    try {
+        const tokenResponse = await axios.post(
+            'https://www.reddit.com/api/v1/access_token',
+            qs.stringify({ grant_type: 'client_credentials' }),
+            {
+                headers: {
+                    Authorization: `Basic ${Buffer.from(`${clientId}:${clientSecret}`).toString('base64')}`,
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+            }
+        );
+        return tokenResponse.data.access_token;
+    } catch (error) {
+        console.error('Error generating access token:', error.message);
+        throw new Error('Failed to generate access token');
     }
-  );
-  return tokenResponse.data.access_token;
 }
 
-// Step 2: Fetch subreddit posts
-// async function fetchRedditPosts(token) {
-//   const postsResponse = await axios.get(
-//     `https://oauth.reddit.com/r/${subreddit}/hot?limit=5`,
-//     {
-//       headers: {
-//         Authorization: `Bearer ${token}`,
-//         'User-Agent': 'reddit-app-script/0.1',
-//       },
-//     }
-//   );
 
-//   const posts = postsResponse.data.data.children;
-//   posts.forEach((post, index) => {
-//     console.log(`${index + 1}. ${post.data.title}`);
-//     console.log(`   👉 https://reddit.com${post.data.permalink}\n`);
-//   });
+
+// export async function fetchRedditPosts() {
+//     try {
+//         const token = await getAccessToken();
+//         const postsResponse = await axios.get(
+//             `https://oauth.reddit.com/r/${subreddit}/hot?limit=10`,
+//             {
+//                 headers: {
+//                     Authorization: `Bearer ${token}`,
+//                     'User-Agent': 'reddit-app-script/0.1',
+//                 },
+//             }
+//         );
+
+//         return postsResponse.data.data.children.map((post) => ({
+//             title: post.data.title,
+//             preview: post.data.thumbnail,
+//             url: post.data.url,
+//             source: 'Reddit',
+//         }));
+//     } catch (error) {
+//         console.error('Error fetching Reddit posts:', error.message);
+//         throw new Error('Failed to fetch Reddit posts');
+//     }
 // }
 
-async function fetchRedditPosts(token) {
-    const postsResponse = await axios.get(
-      `https://oauth.reddit.com/r/${subreddit}/hot?limit=5`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'User-Agent': 'reddit-app-script/0.1',
-        },
-      }
-    );
-  
-    const posts = postsResponse.data.data.children;
-  
-    // Extract specific data from each post
-    posts.forEach((post, index) => {
-      const { title, author, permalink } = post.data;
-      console.log(`${index + 1}. Title: ${title}`);
-      console.log(`   Author: ${author}`);
-      console.log(`   URL: https://reddit.com${permalink}\n`);
-    });
-  }
 
-
-// Run the whole process
-(async () => {
+export async function fetchRedditPosts() {
   try {
-    const token = await getAccessToken();
-    await fetchRedditPosts(token);
+      const token = await getAccessToken();
+      const postsResponse = await axios.get(
+          `https://oauth.reddit.com/r/${subreddit}/hot?limit=10`,
+          {
+              headers: {
+                  Authorization: `Bearer ${token}`,
+                  'User-Agent': 'reddit-app-script/0.1',
+              },
+          }
+      );
+
+      return postsResponse.data.data.children.map((post) => ({
+          title: post.data.title,
+          preview: post.data.thumbnail,
+          url: post.data.url,
+          permalink: post.data.permalink, // Ensure permalink is included
+          source: 'Reddit',
+      }));
   } catch (error) {
-    console.error('Error:', error.response?.data || error.message);
+      console.error('Error fetching Reddit posts:', error.message);
+      throw new Error('Failed to fetch Reddit posts');
   }
-})();
+}

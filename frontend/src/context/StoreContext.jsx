@@ -1,121 +1,29 @@
-import axios from "axios";
-import {
-    createContext,
-    React,
-    useEffect,
-    // useEffect,
-    useState
-} from "react";
+import 
+// React,
+ { createContext, useState } from 'react';
+import PropTypes from 'prop-types';
 
-export const StoreContext = createContext(null)
-// export const StoreContext = createContext(null)
+export const StoreContext = createContext(null);
 
-const StoreContextProvider = (props) => {
-
-    const url = "https://food-order-website-backend-x6b5.onrender.com"
-    // const url = "http://localhost:4000"
-    const [token, setToken] = useState("")
-    const [cartItems, setcartItems] = useState({})
-    const [food_list, setFoodList] = useState([])
-    const [isLoading, setIsLoading] = useState(true);
-
-    const addToCart = async (itemId) => {
-        if (!cartItems[itemId]) {
-            setcartItems((prev) => ({ ...prev, [itemId]: 1 }))
-        }
-        else {
-            setcartItems((prev) => ({ ...prev, [itemId]: prev[itemId] + 1 }))
-        }
-        if (token) {
-            await axios.post(url + "/api/cart/add", { itemId }, { headers: { token } })
-        }
-
-    }
-
-
-    const removeFromCart = async (itemId) => {
-        setcartItems((prev) => ({ ...prev, [itemId]: prev[itemId] - 1 }))
-        if (token) {
-            await axios.post(url + "/api/cart/remove", { itemId }, { headers: { token } })
-        }
-    }
-
-    const fetchFoodList = async () => {
-        const response = await axios.get(url + "/api/food/list")
-        setFoodList(response.data.data)
-    }
-
-    const loadCartData = async (token) => {
-
-        const response = await axios.post(url + "/api/cart/get", {}, { headers: { token } })
-        setcartItems(response.data.cartData);
-    }
-
-
-
-
-    // useEffect(() => {
-    //     console.log(cartItems);
-    // }, [cartItems])
-
-    // const getTotal = ()=> {
-    //     let totalAmount = 0;
-    //     for (const key in cartItems) {
-    //         let itemInfo = food_list.find((product)=>product.id===item)
-    //     }
-    // }
-
-    const getTotalCartAmount = () => {
-        let totalAmount = 0;
-        for (let item in cartItems) {
-            if (cartItems[item] > 0) {
-
-                let itemInfo = food_list.find((product) => product._id === item);
-
-
-                totalAmount += itemInfo.price * cartItems[item];
-            }
-        }
-        return totalAmount;
-    }
-
-
-
-
-    useEffect(() => {
-        async function loadData() {
-            await fetchFoodList()
-            if (localStorage.getItem("token")) {
-                setToken(localStorage.getItem("token"));
-                await loadCartData(localStorage.getItem("token"));
-            }
-            setIsLoading(false)
-        }
-
-
-        loadData();
-        // console.log(food_list);
-    }, [])
+const StoreContextProvider = ({ children }) => {
+    const url = 'https://oauth.reddit.com'; // Reddit API base URL
+    const [token, setToken] = useState('fwL0r61OK08i9djWUdLV_3q0iJpRzw'); // Replace with your actual token
 
     const contextValue = {
-        food_list,
-        cartItems,
-        setcartItems,
-        addToCart,
-        removeFromCart,
-        getTotalCartAmount,
         url,
         token,
         setToken,
-        isLoading
-    }
+    };
 
     return (
         <StoreContext.Provider value={contextValue}>
-            {props.children}
-        </StoreContext.Provider >
+            {children}
+        </StoreContext.Provider>
+    );
+};
 
-    )
-}
+StoreContextProvider.propTypes = {
+    children: PropTypes.node.isRequired,
+};
 
-export default StoreContextProvider
+export default StoreContextProvider;

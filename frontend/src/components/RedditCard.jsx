@@ -1,9 +1,13 @@
-import React from 'react';
+import PropTypes from 'prop-types';
 
 const RedditCard = ({ post }) => {
   const isValidImage =
     post.url &&
-    (post.url.endsWith('.jpg') || post.url.endsWith('.jpeg') || post.url.endsWith('.png') || post.url.endsWith('.gif') || post.url.endsWith('.webp'));
+    (post.url.endsWith('.jpg') ||
+      post.url.endsWith('.jpeg') ||
+      post.url.endsWith('.png') ||
+      post.url.endsWith('.gif') ||
+      post.url.endsWith('.webp'));
 
   const isVideo = post.is_video && post.media?.reddit_video?.fallback_url;
 
@@ -13,18 +17,14 @@ const RedditCard = ({ post }) => {
         border: '1px solid #ccc',
         borderRadius: '8px',
         padding: '1rem',
-        width: '300px',
-        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-        backgroundColor: '#f8f9fa',
-        fontFamily: 'Arial, sans-serif',
+        marginBottom: '1rem',
+        backgroundColor: '#f9f9f9',
       }}
     >
-      <h2 style={{ fontSize: '1rem', fontWeight: 'bold', marginBottom: '0.5rem', color: '#333' }}>
-        {post.title}
-      </h2>
-      <p style={{ fontSize: '0.8rem', color: '#555', marginBottom: '0.5rem' }}>
-        Posted by <span style={{ fontWeight: 'bold' }}>u/{post.author}</span>
-      </p>
+      <h2>{post.title}</h2>
+      <p>From: Reddit</p>
+
+      {/* Render video if available */}
       {isVideo ? (
         <video
           controls
@@ -38,6 +38,7 @@ const RedditCard = ({ post }) => {
           Your browser does not support the video tag.
         </video>
       ) : isValidImage ? (
+        // Render image if available
         <img
           src={post.url}
           alt="Post content"
@@ -48,15 +49,16 @@ const RedditCard = ({ post }) => {
           }}
         />
       ) : (
-        <p style={{ fontSize: '0.9rem', color: '#999', marginBottom: '0.5rem' }}>
-          No image or video available
-        </p>
+        // Fallback if no media is available
+        <p>No media available</p>
       )}
-      <p style={{ fontSize: '0.9rem', color: '#333', marginBottom: '0.5rem' }}>
-        {post.selftext ? post.selftext.slice(0, 100) + '...' : 'No description available.'}
-      </p>
+
+      {/* Render description or selftext */}
+      <p>{post.selftext ? post.selftext.slice(0, 100) + '...' : 'No description available.'}</p>
+
+      {/* Link to the full post */}
       <a
-        href={`https://reddit.com${post.permalink}`}
+        href={`https://reddit.com${post.permalink}`} // Use permalink to construct the link
         target="_blank"
         rel="noopener noreferrer"
         style={{
@@ -67,14 +69,27 @@ const RedditCard = ({ post }) => {
           color: '#fff',
           textDecoration: 'none',
           borderRadius: '4px',
-          fontSize: '0.8rem',
-          textAlign: 'center',
         }}
       >
-        View on Reddit
+        View Full Post
       </a>
     </div>
   );
+};
+
+RedditCard.propTypes = {
+  post: PropTypes.shape({
+    url: PropTypes.string,
+    is_video: PropTypes.bool,
+    media: PropTypes.shape({
+      reddit_video: PropTypes.shape({
+        fallback_url: PropTypes.string,
+      }),
+    }),
+    title: PropTypes.string.isRequired,
+    selftext: PropTypes.string,
+    permalink: PropTypes.string.isRequired, // Ensure permalink is required
+  }).isRequired,
 };
 
 export default RedditCard;

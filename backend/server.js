@@ -1,52 +1,32 @@
-import express from "express"
-import cors from "cors"
-import { connectDB } from "./config/db.js"
-import foodRouter from "./routes/foodRoute.js"
-import userRouter from "./routes/userRoute.js"
-import 'dotenv/config'
-import cartRouter from "./routes/cartRoute.js"
-import orderRouter from "./routes/orderRoute.js"
-
-import creditRouter from "./routes/creditRoute.js";
+import express from "express";
+import cors from "cors";
+import { connectDB } from "./config/db.js";
+import userRouter from "./routes/userRoute.js";
 import feedRouter from "./routes/feedRoute.js";
-import adminRouter from "./routes/adminRoute.js";
+import creditRouter from "./routes/creditRoute.js";
 
+import 'dotenv/config';
 
+// App config
+const app = express();
+const port = 4000;
 
-// app config
-const app = express()
-const port = 4000
+// Middleware
+app.use(express.json());
+app.use(cors());
 
-// middleware
-
-app.use(express.json())
-app.use(cors())
-
-// db connection
+// DB connection
 connectDB();
 
-// api Endpoints
-app.use("/api/food",foodRouter)
-app.use("/images",express.static('uploads'))
-app.use("/api/user/",userRouter)
-app.use("/api/cart",cartRouter)
-app.use("/api/order",orderRouter)
-
-app.use("/api/credits", creditRouter);
+// API Endpoints
+app.use("/api/user", userRouter);
 app.use("/api/feed", feedRouter);
-app.use("/api/admin", adminRouter);
-// app.post('/add-food', upload.single('file'), addFood);
+app.use("/api/credits", creditRouter);
 
-app.get('/payment-success/:order_id', (req, res) => {
-    const { order_id } = req.params;
-    res.send(`Payment was successful for Order ID: ${order_id}! Thank you for your purchase.`);
+app.get("/", (req, res) => {
+    res.send("API Working");
 });
 
-app.get("/",(req,res)=>{
-    res.send("API Working")
-})
-
-app.listen(port,()=>{
-    console.log(`server started on http://localhost:${port}`)
-})
-
+app.listen(port, () => {
+    console.log(`Server started on http://localhost:${port}`);
+});
