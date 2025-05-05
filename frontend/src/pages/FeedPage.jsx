@@ -1,15 +1,17 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
 import RedditCard from "../components/RedditCard";
+import { StoreContext } from '../context/StoreContext';
 
 const FeedPage = () => {
+    const { url } = useContext(StoreContext); // Access the URL from the context
     const [feeds, setFeeds] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchFeeds = async () => {
             try {
-                const response = await axios.get("http://localhost:4000/api/feed"); // Use backend proxy
+                const response = await axios.get(`${url}/api/feed`); // Use the URL from the context
                 setFeeds(response.data.feeds);
                 setLoading(false);
             } catch (error) {
@@ -19,7 +21,7 @@ const FeedPage = () => {
         };
 
         fetchFeeds();
-    }, []);
+    }, [url]);
 
     if (loading) {
         return <p>Loading...</p>;

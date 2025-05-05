@@ -1,16 +1,15 @@
-import 
-// React,
- { createContext, useState } from 'react';
+import { createContext, useState } from 'react';
 import PropTypes from 'prop-types';
 
 export const StoreContext = createContext(null);
 
 const StoreContextProvider = ({ children }) => {
-    const url = 'https://oauth.reddit.com'; // Reddit API base URL
-    const [token, setToken] = useState('fwL0r61OK08i9djWUdLV_3q0iJpRzw'); // Replace with your actual token
+    // const url = 'http://localhost:4000'; 
+    const url = 'https://community-hub-backend.onrender.com'; 
+    const [token, setToken] = useState('');
 
     const contextValue = {
-        url,
+        url, // Pass the URL to the context
         token,
         setToken,
     };

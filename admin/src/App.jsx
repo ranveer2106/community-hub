@@ -1,14 +1,15 @@
 import React from 'react';
 import Navbar from './components/Navbar/Navbar';
 import Sidebar from './components/Sidebar/Sidebar';
-import Reports from './pages/Reports/Reports';
-import Users from './pages/Users/Users';
-import Stats from './pages/Stats/Stats';
+import Reports from './components/Reports/Reports';
+import Users from './components/Users/Users';
+import Stats from './components/Stats/Stats';
 import { Route, Routes } from 'react-router-dom';
+import UrlProvider from './UrlContext'; // Import the UrlProvider
 
 const App = () => {
     return (
-        <>
+        <UrlProvider>
             <Navbar />
             <div className="app-component">
                 <Sidebar />
@@ -18,7 +19,7 @@ const App = () => {
                     <Route path="/stats" element={<Stats />} />
                 </Routes>
             </div>
-        </>
+        </UrlProvider>
     );
 };
 

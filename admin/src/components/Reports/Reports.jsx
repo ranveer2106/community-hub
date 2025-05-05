@@ -1,19 +1,25 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
+import { UrlContext } from '../../UrlContext'; // Import the UrlContext
 
 const Reports = () => {
     const [reports, setReports] = useState([]);
+    const { url } = useContext(UrlContext); // Access the URL from the context
 
     useEffect(() => {
         const fetchReports = async () => {
-            const response = await axios.get('/api/admin/reports');
-            if (response.data.success) {
-                setReports(response.data.reports);
+            try {
+                const response = await axios.get(`${url}/api/admin/reports`);
+                if (response.data.success) {
+                    setReports(response.data.reports);
+                }
+            } catch (error) {
+                console.error('Error fetching reports:', error.message);
             }
         };
 
         fetchReports();
-    }, []);
+    }, [url]);
 
     return (
         <div>
