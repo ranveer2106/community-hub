@@ -7,6 +7,10 @@ import 'dotenv/config'
 import cartRouter from "./routes/cartRoute.js"
 import orderRouter from "./routes/orderRoute.js"
 
+import creditRouter from "./routes/creditRoute.js";
+import feedRouter from "./routes/feedRoute.js";
+import adminRouter from "./routes/adminRoute.js";
+
 
 
 // app config
@@ -27,6 +31,10 @@ app.use("/images",express.static('uploads'))
 app.use("/api/user/",userRouter)
 app.use("/api/cart",cartRouter)
 app.use("/api/order",orderRouter)
+
+app.use("/api/credits", creditRouter);
+app.use("/api/feed", feedRouter);
+app.use("/api/admin", adminRouter);
 // app.post('/add-food', upload.single('file'), addFood);
 
 app.get('/payment-success/:order_id', (req, res) => {

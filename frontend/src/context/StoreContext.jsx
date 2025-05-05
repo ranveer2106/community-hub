@@ -79,25 +79,7 @@ const StoreContextProvider = (props) => {
         return totalAmount;
     }
 
-    // const getTotalCartAmount = () => {
-    //     let totalAmount = 0;
 
-    //     for (const item in cartItems) {
-    //         if (cartItems[item] > 0) {
-    //             // Ensure item ID matches the type of product.id
-    //             let itemInfo = food_list.find((product) => product._id === Number(item));
-    //             console.log(itemInfo);
-
-    //             if (itemInfo) {
-    //                 totalAmount += itemInfo.price * cartItems[item];
-    //             } else {
-    //                 console.error(`Item with id ${item} not found in food_list`);
-    //             }
-    //         }
-    //     }
-
-    //     return totalAmount;
-    // };
 
 
     useEffect(() => {

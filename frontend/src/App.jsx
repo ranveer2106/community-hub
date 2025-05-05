@@ -17,6 +17,9 @@ import ContactUs from './pages/ContactUs/ContactUs'
 import { StoreContext } from './context/StoreContext'
 import Loader from './components/Loader/Loader'
 
+import PersonalPage from './pages/PersonalPage';
+import FeedPage from './pages/FeedPage';
+import AdminPage from './pages/AdminPage';
 
 
 const App = () => {
@@ -49,6 +52,11 @@ const App = () => {
 
         <Routes>
           <Route path='/' element={<Home />} />
+
+          <Route path="/personal" element={<PersonalPage />} />
+          <Route path="/feed" element={<FeedPage />} />
+          <Route path="/admin" element={<AdminPage />} />
+
           <Route path='/cart' element={<Cart />} />
           <Route path='/order' element={<PlaceOrder />} />
           <Route path='/myorders' element={<MyOrders />} />
